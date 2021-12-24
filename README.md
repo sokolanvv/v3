@@ -48,8 +48,8 @@ Statements
 
 ```
 Statement
-  : CompoundStatement
-  | SimpleStatement
+  : CompoundStatement NEWLINE
+  | SimpleStatement NEWLINE
   ;
 ```
 
@@ -71,4 +71,9 @@ SimpleStatement
   | Break
   | Continue
   ;
+```
+
+```
+Assignment
+  | IDENTIFIER ASSIGN
 ```
