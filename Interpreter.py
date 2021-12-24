@@ -1,3 +1,15 @@
+operators = {
+  '+': 'PLUS',
+  '-': 'MINUS',
+  '*': 'MULT',
+  '/': 'DIV'
+}
+
+delimiters = {
+  '(': 'PAROPEN',
+  ')': 'PARCLOSE'
+}
+
 def getInterpritation(string, type):
   if type == 'INTEGER':
     if len(string) < 3:
@@ -14,5 +26,9 @@ def getInterpritation(string, type):
     return float(string)
   elif type == 'STRING':
     return string[1:-1]
+  elif type == 'OPERATOR':
+    return operators[string]
+  elif type == 'DELIMITER':
+    return delimiters[string]
   else:
     return string

@@ -264,7 +264,7 @@ transit.update({ State.ifL: {
 # Operations
 transit.update({ State.op: {
   i: State.op if i in [ *Operators, CharType.equal ]
-  else State.err if i in [ *DelimitersPCB, *RestDelimiters ]
+  else State.err if i in [ *RestDelimiters ]
   else State.newline if i == CharType.newline
   else State.nostate
   for i in CharType

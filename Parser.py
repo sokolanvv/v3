@@ -1,15 +1,26 @@
+class ObjWrap:
+  def __init__(self, val):
+    self.interprited = val
+    self.type = val
+
 class Parser:
   def __init__(self, tokenList):
+    print()
     self.tokens = tokenList
     self.tokenC = 0
 
   def getNextToken(self):
-    token = self.tokens[self.tokenC]
-    self.tokenC += 1
+    try:
+      token = self.tokens[self.tokenC].value
+      if (token in ['NEWLINE', 'INDENT', 'DEDENT']):
+        token = ObjWrap(token)
+      self.tokenC += 1
+    except IndexError:
+      token = None
     return token
 
   def parse(self):
-    self.lookahead = self.tokens.getNextToken()
+    self.lookahead = self.getNextToken()
 
     return self.Program()
 
@@ -20,7 +31,8 @@ class Parser:
     }
 
   def StatementList(self):
-    statementList = [self.Statement()]
+    s = self.Statement()
+    statementList = [s]
 
     while (self.lookahead != None):
       statementList.append(self.Statement())
@@ -32,7 +44,7 @@ class Parser:
 
   def ExpressionStatement(self):
     expression = self.Expression()
-    self.consume('NEWLINE')
+    k = self.consume('NEWLINE')
     return {
       "type": "ExpressionStatement",
       "expression": expression
@@ -53,8 +65,8 @@ class Parser:
   def BinAddExpression(self):
     left = self.BinMultExpression()
 
-    while (self.lookahead.interpreted in ['PLUS', 'MINUS']):
-      operator = self.consume(self.lookahead.interpreted)
+    while (self.lookahead.interprited in ['PLUS', 'MINUS']):
+      operator = self.consume(self.lookahead.interprited).interprited
       right = self.BinMultExpression()
 
       left = {
@@ -69,8 +81,9 @@ class Parser:
   def BinMultExpression(self):
     left = self.PrimaryExpression()
 
+    self.lookahead
     while (self.lookahead.interprited in ['MULT', 'DIV']):
-      operator = self.consume(self.lookahead.interprited)
+      operator = self.consume(self.lookahead.interprited).interprited
       right = self.PrimaryExpression()
 
       left = {
@@ -129,10 +142,10 @@ class Parser:
       raise SyntaxError(f"Unexpected EOS, expected {tokenType}")
 
     if (
-      token.type != tokenType or
+      token.type != tokenType and
       token.interprited != tokenType
     ):
-      raise SyntaxError(f"Unexpected token: Got {token.type}, expected: {tokenType}")
+      raise SyntaxError(f"Unexpected token: Got '{token.type}', expected: '{tokenType}'")
 
     self.lookahead = self.getNextToken()
     return token
