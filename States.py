@@ -4,6 +4,8 @@ class State(Enum):
   nostate = 0
   identifier = 1
   sL = 10
+  escapeS = 11
+  escapeC = 12
   bL = 20
   diL = 31
   diLU = 311

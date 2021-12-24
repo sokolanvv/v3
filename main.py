@@ -26,8 +26,8 @@ if __name__ == "__main__":
 
   k = Lexer(input_file)
   k.display()
-  g = Parser(k.tokens).parse()
-  print(json.dumps(g, indent=2))
+  # g = Parser(k.tokens).parse()
+  # print(json.dumps(g, indent=2))
 
   # if i == 'lex':
   #   path = input("    Input file name:\n\t")

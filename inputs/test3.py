@@ -1,6 +1,6 @@
 x = 123
 y = .33
-z = "string"
+z = "st\nring"
 v = w = 32
 
 b += 0xaf

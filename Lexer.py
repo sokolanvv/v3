@@ -1,13 +1,14 @@
 from Stack import Stack
-from StateMachine import getState
 
 from States import State
 
 from Lexeme import Lexeme
 from Token import Token
 from CharTypes import CharType
-from TypeMachine import getType
 
+from Escape import getEscape
+from StateMachine import getState
+from TypeMachine import getType
 from LexemeTypes import getTyping
 from Interpreter import getInterpritation
 
@@ -74,9 +75,6 @@ class Lexer:
       ))
     self.buffer = ''
 
-  def process_lexemes_4(self, line) -> None:
-    pass
-
   def process_lexemes_3(self, line) -> None:
     self.char = line[self.current_cursor]
     self.state = getState(State.nostate, self.char)
@@ -106,6 +104,12 @@ class Lexer:
         self.bufferCleanUp()
         self.backdash = False
         return
+      elif (c_state == State.escapeS):
+        self.state = State.escapeS
+      elif (c_state == State.escapeC):
+        c_char = getEscape(c_char)
+        self.buffer += c_char
+        self.state = State.sL
       elif (c_state == State.nostate):
         if (getType(c_char) == CharType.squote or getType(c_char) == CharType.dquote) and self.state == State.sL:
           self.buffer += self.char
@@ -165,4 +169,4 @@ class Lexer:
     print()
     # with open("test", "w") as f:
     for i, token in enumerate(self.tokens):
-      print(f"Token #{i+1}: {token.toString()}")
+      print(f"{token.toString()}")

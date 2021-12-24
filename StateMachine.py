@@ -83,8 +83,19 @@ transit = { State.nostate: {
 
 # String literals
 transit.update({ State.sL: {
-  i: State.sL if i not in [ *StringLiterals ]
+  i: State.sL if i not in [ *StringLiterals, CharType.backslash ]
+  else State.escapeS if i == CharType.backslash
   else State.nostate
+  for i in CharType
+}})
+
+transit.update({ State.escapeS: {
+  i: State.escapeC for i in CharType
+}})
+
+transit.update({ State.escapeC: {
+  i: State.err if i in [ CharType.newline, CharType.backslash ]
+  else State.sL
   for i in CharType
 }})
 # -

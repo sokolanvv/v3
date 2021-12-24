@@ -15,6 +15,6 @@ class Token:
         val = self.value.toString()
       else:
         val = self.value
-      return f"{self.line}  {self.pos}\t{val}"
+      return f"{val}"
     else:
       raise Exception("Tried displaying incomplete token")

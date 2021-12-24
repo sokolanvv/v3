@@ -1,5 +1,5 @@
-"string"
-'string'
+"string\""
+'stri\nng'
 identif
 1203
 320.0
