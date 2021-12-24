@@ -56,11 +56,33 @@ class Parser:
   def AssignmentExpression(self):
     left = self.BinAddExpression()
 
-    return left
     if (self.lookahead.interprited in [
-      'ASSIGN', 'ASSIGN_ADD', 'ASSIGN_REM', 'ASSIGN_MUL', 'ASSIGN_DIV'
+      'ASSIGN', 'ASSIGN_ADD', 
+      'ASSIGN_REM', 'ASSIGN_MUL', 
+      'ASSIGN_DIV'
     ]):
-      pass
+      opType = self.lookahead.interprited
+      self.consume(opType)
+
+      left = self.validateCanAssign(left)
+
+      return {
+        "type": 'AssignmentExpression',
+        "operator": opType,
+        "left": left,
+        "right": self.AssignmentExpression()
+      }
+
+    return left
+
+  def AssignmentTarget(self):
+    return self.Identifier()
+
+  def validateCanAssign(self, node):
+    if (node["type"] == 'Identifier'):
+      return node
+    
+    raise SyntaxError(f"Invalid assignment target!")
 
   def BinAddExpression(self):
     left = self.BinMultExpression()
@@ -96,10 +118,19 @@ class Parser:
     return left
 
   def PrimaryExpression(self):
+    if (self.isLiteral(self.lookahead)):
+      return self.Literal()
     if (self.lookahead.interprited == 'PAROPEN'):
       return self.ParanthesisedPrimary()
     else:
-      return self.Literal()
+      return self.AssignmentTarget()
+
+  def Identifier(self):
+    token = self.consume('IDENTIFIER')
+    return {
+      "type": 'Identifier',
+      "value": token.interprited
+    }
 
   def ParanthesisedPrimary(self):
     self.consume('PAROPEN')
@@ -120,6 +151,11 @@ class Parser:
       return self.StringLiteral()
     else:
       raise SyntaxError(f"Unexpected literal! Got: {t}")
+
+  def isLiteral(self, token):
+    return token.type in [
+      'INTEGER', 'FLOAT', 'STRING'
+    ]
 
   def NumLiteral(self, f):
     token = self.consume(f)

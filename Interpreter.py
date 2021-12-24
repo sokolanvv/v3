@@ -2,8 +2,13 @@ operators = {
   '+': 'PLUS',
   '-': 'MINUS',
   '*': 'MULT',
-  '/': 'DIV'
-}
+  '/': 'DIV',
+  '=': 'ASSIGN',
+  '+=': 'ASSIGN_ADD',
+  '-=': 'ASSIGN_REM',
+  '*=': 'ASSIGN_MUL',
+  '/=': 'ASSIGN_DIV'
+ }
 
 delimiters = {
   '(': 'PAROPEN',
@@ -27,7 +32,10 @@ def getInterpritation(string, type):
   elif type == 'STRING':
     return string[1:-1]
   elif type == 'OPERATOR':
-    return operators[string]
+    res = operators.get(string, None)
+    if res == None:
+      raise SyntaxError('Unknown operator')
+    return res
   elif type == 'DELIMITER':
     return delimiters[string]
   else:
