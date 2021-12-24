@@ -59,17 +59,26 @@ class Parser:
     self.consume('COLON')
     self.consume('NEWLINE')
     block = self.BlockStatement()
-    if self.lookahead.type == 'KEYWORD' and self.lookahead.interprited == 'else':
+    if (
+      self.lookahead != None and
+      self.lookahead.type == 'KEYWORD' and 
+      self.lookahead.interprited == 'else'
+    ):
       self.consume('KEYWORD')
       self.consume('COLON')
       self.consume('NEWLINE')
       alt_block = self.BlockStatement()
-    
+      return {
+        "type": 'IFStatement',
+        "test": expression,
+        "consequent": block,
+        "alternate": alt_block
+      }
+
     return {
       "type": 'IFStatement',
       "test": expression,
       "consequent": block,
-      "alternate": alt_block
     }
 
   def ExpressionStatement(self):
