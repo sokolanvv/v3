@@ -7,12 +7,20 @@ operators = {
   '+=': 'ASSIGN_ADD',
   '-=': 'ASSIGN_REM',
   '*=': 'ASSIGN_MUL',
-  '/=': 'ASSIGN_DIV'
+  '/=': 'ASSIGN_DIV',
+
+  '>': 'GT',
+  '>=': 'GE',
+  '<': 'LT',
+  '<=': 'LE',
+  '==': 'EQ',
+  '!=': 'DT'
  }
 
 delimiters = {
   '(': 'PAROPEN',
-  ')': 'PARCLOSE'
+  ')': 'PARCLOSE',
+  ':': 'COLON'
 }
 
 def getInterpritation(string, type):

@@ -31,16 +31,46 @@ class Parser:
     }
 
   def StatementList(self):
-    s = self.Statement()
-    statementList = [s]
+    statementList = [self.Statement()]
 
-    while (self.lookahead != None):
+    while (self.lookahead != None and self.lookahead.type != 'DEDENT'):
       statementList.append(self.Statement())
 
     return statementList
 
   def Statement(self):
+    if self.lookahead.type == 'KEYWORD' and self.lookahead.interprited == 'if':
+      return self.IFStatement()
     return self.ExpressionStatement()
+
+  def BlockStatement(self):
+    self.consume('INDENT')
+    sList = self.StatementList()
+    self.consume('DEDENT')
+
+    return {
+      "type": 'BlockStatement',
+      "body": sList
+    }
+
+  def IFStatement(self):
+    self.consume('KEYWORD')
+    expression = self.Expression()
+    self.consume('COLON')
+    self.consume('NEWLINE')
+    block = self.BlockStatement()
+    if self.lookahead.type == 'KEYWORD' and self.lookahead.interprited == 'else':
+      self.consume('KEYWORD')
+      self.consume('COLON')
+      self.consume('NEWLINE')
+      alt_block = self.BlockStatement()
+    
+    return {
+      "type": 'IFStatement',
+      "test": expression,
+      "consequent": block,
+      "alternate": alt_block
+    }
 
   def ExpressionStatement(self):
     expression = self.Expression()
@@ -54,7 +84,7 @@ class Parser:
     return self.AssignmentExpression()
 
   def AssignmentExpression(self):
-    left = self.BinAddExpression()
+    left = self.BinLogExpression()
 
     if (self.lookahead.interprited in [
       'ASSIGN', 'ASSIGN_ADD', 
@@ -83,6 +113,24 @@ class Parser:
       return node
     
     raise SyntaxError(f"Invalid assignment target!")
+
+  def BinLogExpression(self):
+    left = self.BinAddExpression()
+
+    while (self.lookahead.interprited in [
+      'GT', 'GE', 'LT', 'LE', 'EQ', 'DT'
+    ]):
+      operator = self.consume(self.lookahead.interprited).interprited
+      right = self.BinAddExpression()
+
+      left = {
+        "type": 'BinaryExpression',
+        "operator": operator,
+        "left": left,
+        "right": right
+      }
+
+    return left
 
   def BinAddExpression(self):
     left = self.BinMultExpression()
@@ -181,7 +229,7 @@ class Parser:
       token.type != tokenType and
       token.interprited != tokenType
     ):
-      raise SyntaxError(f"Unexpected token: Got '{token.type}', expected: '{tokenType}'")
+      raise SyntaxError(f"Unexpected token: Got '{token.type} {token.interprited}', expected: '{tokenType}'")
 
     self.lookahead = self.getNextToken()
     return token

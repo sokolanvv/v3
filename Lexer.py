@@ -47,11 +47,22 @@ class Lexer:
         self.tokens.append(token)
 
   def getLexeme(self, string, state) -> Lexeme:
+    typing = getTyping(state)
+    if typing == 'IDENTIFIER' and string in [
+    'None', 'True', 'False', 'and', 'as', 'assert', 'break',
+    'continue', 'def', 'del', 'elif', 'else', 'except',
+    'for', 'from', 'global', 'if', 'import', 'in',
+    'class', 'finally', 'is', 'lambda', 'nonlocal', 'not',
+    'or', 'pass', 'raise', 'return', 'try', 'while', 'with',
+    'yield'
+    ]:
+      typing = 'KEYWORD'
+
     return Lexeme(
       self.current_line_number,
       self.current_cursor,
-      getTyping(state),
-      getInterpritation(string, getTyping(state)),
+      typing,
+      getInterpritation(string, typing),
       string
     )
 
